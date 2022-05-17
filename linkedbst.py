@@ -6,8 +6,8 @@ Author: Ken Lambert
 from abstractcollection import AbstractCollection
 from bstnode import BSTNode
 from linkedstack import LinkedStack
-from linkedqueue import LinkedQueue
 from math import log
+from tqdm import tqdm
 
 
 class LinkedBST(AbstractCollection):
@@ -25,13 +25,13 @@ class LinkedBST(AbstractCollection):
         90 degrees counterclockwise."""
 
         def recurse(node, level):
-            s = ""
+            string = ""
             if node != None:
-                s += recurse(node.right, level + 1)
-                s += "| " * level
-                s += str(node.data) + "\n"
-                s += recurse(node.left, level + 1)
-            return s
+                string += recurse(node.right, level + 1)
+                string += "| " * level
+                string += str(node.data) + "\n"
+                string += recurse(node.left, level + 1)
+            return string
 
         return recurse(self._root, 0)
 
@@ -67,7 +67,15 @@ class LinkedBST(AbstractCollection):
 
     def postorder(self):
         """Supports a postorder traversal on a view of self."""
-        return None
+        lst = list()
+        def postorder1(node, node_list):
+            if node.left is not None:
+                postorder1(node.left, node_list)
+            node_list.append(node.data)
+            if node.right is not None:
+                postorder1(node.right, node_list)
+        postorder1(self._root, lst)
+        return lst
 
     def levelorder(self):
         """Supports a levelorder traversal on a view of self."""
@@ -80,7 +88,6 @@ class LinkedBST(AbstractCollection):
     def find(self, item):
         """If item matches an item in self, returns the
         matched item, or None otherwise."""
-
         def recurse(node):
             if node is None:
                 return None
@@ -90,7 +97,6 @@ class LinkedBST(AbstractCollection):
                 return recurse(node.left)
             else:
                 return recurse(node.right)
-
         return recurse(self._root)
 
     # Mutator methods
@@ -239,6 +245,11 @@ class LinkedBST(AbstractCollection):
             :param top:
             :return:
             '''
+            if top is None:
+                return 0
+            return 1 + max(height1(top.right), height1(top.left))
+
+        return height1(self._root) - 1
 
     def is_balanced(self):
         '''
@@ -246,7 +257,9 @@ class LinkedBST(AbstractCollection):
         :return:
         '''
 
-    def rangeFind(self, low, high):
+        return self.height() < (2 * log(self._size + 1) - 1)
+
+    def range_find(self, low, high):
         '''
         Returns a list of the items in the tree, where low <= item <= high."""
         :param low:
@@ -254,11 +267,35 @@ class LinkedBST(AbstractCollection):
         :return:
         '''
 
+        nodes = self.postorder()
+        lower = 0
+        upper = len(nodes) - 1
+        while nodes[lower] < low:
+            lower += 1
+        while nodes[upper] > high:
+            upper -= 1
+        if lower > upper:
+            return
+        return nodes[lower:upper+1]
+
     def rebalance(self):
         '''
         Rebalances the tree.
         :return:
         '''
+
+        nodes = self.postorder()
+        self.clear()
+        def recursive_add_mid(tree:LinkedBST, lst:list):
+            if len(lst) == 0:
+                return
+            l = len(lst)
+            tree.add(lst[l // 2])
+            lst.pop(l // 2)
+            recursive_add_mid(tree, lst[:l//2])
+            recursive_add_mid(tree, lst[l//2:])
+
+        recursive_add_mid(self, nodes) 
 
     def successor(self, item):
         """
@@ -270,6 +307,18 @@ class LinkedBST(AbstractCollection):
         :rtype:
         """
 
+        nodes = self.postorder()
+        i = 0
+        while nodes[i] < item:
+            i += 1
+            if i >= len(nodes):
+                return
+        if nodes[i] != item:
+            return nodes[i]
+        elif i + 1 < len(nodes):
+            return nodes[i + 1]
+        return
+
     def predecessor(self, item):
         """
         Returns the largest item that is smaller than
@@ -279,8 +328,20 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
-        
-    def demo_bst(self, path):
+
+        nodes = self.postorder()
+        i = len(nodes) - 1
+        while nodes[i] > item:
+            i -= 1
+            if i < 0:
+                return
+        if nodes[i] != item:
+            return nodes[i]
+        elif i > 0:
+            return nodes[i - 1]
+        return
+
+    def demo_bst(self, path='words.txt'):
         """
         Demonstration of efficiency binary search tree for the search tasks.
         :param path:
@@ -288,3 +349,7 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
+
+# if __name__ == '__main__':
+#     my_tree = LinkedBST()
+#     my_tree.demo_bst()
