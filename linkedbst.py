@@ -88,16 +88,28 @@ class LinkedBST(AbstractCollection):
     def find(self, item):
         """If item matches an item in self, returns the
         matched item, or None otherwise."""
-        def recurse(node):
-            if node is None:
-                return None
-            elif item == node.data:
-                return node.data
-            elif item < node.data:
-                return recurse(node.left)
+
+        # I rewrote find to be iterative so recursion limit won't be exceeded
+        # def recurse(node):
+        #     if node is None:
+        #         return None
+        #     elif item == node.data:
+        #         return node.data
+        #     elif item < node.data:
+        #         return recurse(node.left)
+        #     else:
+        #         return recurse(node.right)
+        # return recurse(self._root)
+
+        node = self._root
+        while node.data != item:
+            if item > node.data:
+                node = node.right
             else:
-                return recurse(node.right)
-        return recurse(self._root)
+                node = node.left
+            if node is None:
+                return
+        return node, node.data
 
     # Mutator methods
     def clear(self):
