@@ -8,7 +8,11 @@ from bstnode import BSTNode
 from linkedstack import LinkedStack
 from math import log
 from tqdm import tqdm
+from random import shuffle, choice
+from sys import setrecursionlimit
+from time import time,sleep
 
+setrecursionlimit(10**7)
 
 class LinkedBST(AbstractCollection):
     """An link-based binary search tree implementation."""
@@ -365,7 +369,7 @@ class LinkedBST(AbstractCollection):
             return nodes[i - 1]
         return
 
-    def demo_bst(self, path='binary_search_tree/words.txt'):
+    def demo_bst(self, path):
         """
         Demonstration of efficiency binary search tree for the search tasks.
         :param path:
@@ -373,16 +377,61 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
+
+        ITERATIONS = 10000
         lst = list()
         unbalanced_tree = LinkedBST()
         random_add_tree = LinkedBST()
         balanced_tree = LinkedBST()
+        lines = list()
+
         with open(path, 'r', encoding='utf-8') as src:
-            line = src.readline().strip()
-            while line != '':
-                print(line)
-                line = src.readline().strip()
+            lines = src.readlines()
+        progres = 0
+        total = len(lines)
+        for line in lines:
+            if progres % 500 == 0:
+                print(f'Progress: {round(progres * 100 / total, 2)}%', end='\r')
+            progres += 1
+            line = line.strip()
+            lst.append(line)
+            unbalanced_tree.add(line)
+            balanced_tree.add(line)
+        print()
+        shuffle(lst)
+        for line in lst:
+            random_add_tree.add(line)
+        # print(len(lst), unbalanced_tree._size)
+        balanced_tree.rebalance()
+
+        print('Words added successfully!')
+        print(f'\nFinding {ITERATIONS} words :')
+        print('\n--Built-in list:')
+        now = time()
+        for i in tqdm(range(ITERATIONS)):
+            word = choice(lst)
+            lst.index(word)
+        print(f'Total time: {round(time() - now, 3)} seconds.')
+        print('\n--Unbalanced binary search tree (de facto linked list):')
+        now = time()
+        for i in tqdm(range(ITERATIONS)):
+            word = choice(lst)
+            unbalanced_tree.find(word)
+        print(f'Total time: {round(time() - now, 3)} seconds.')
+        print('\n--Random-add binary search tree (unbalanced bst):')
+        now = time()
+        for i in tqdm(range(ITERATIONS)):
+            word = choice(lst)
+            random_add_tree.find(word)
+        print(f'Total time: {round(time() - now, 3)} seconds.')
+        print('\n--Balanced search tree:')
+        now = time()
+        for i in tqdm(range(ITERATIONS)):
+            word = choice(lst)
+            balanced_tree.find(word)
+        print(f'Total time: {round(time() - now, 3)} seconds.')
 
 if __name__ == '__main__':
     my_tree = LinkedBST()
-    my_tree.demo_bst()
+    print('Attention: adding words may take some time')
+    my_tree.demo_bst('binary_search_tree/words100.txt')
