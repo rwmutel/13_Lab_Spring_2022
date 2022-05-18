@@ -59,26 +59,39 @@ class LinkedBST(AbstractCollection):
     def inorder(self):
         """Supports an inorder traversal on a view of self."""
         lyst = list()
+        nodes = LinkedStack()
 
-        def recurse(node):
-            if node != None:
-                recurse(node.left)
+        # def recurse(node):
+        #     print(len(lyst))
+        #     if node != None:
+        #         recurse(node.left)
+        #         lyst.append(node.data)
+        #         recurse(node.right)
+        # recurse(self._root)
+
+        node = self._root
+        while not nodes.isEmpty() or node is not None:
+            if node is not None:
+                nodes.push(node)
+                node = node.left
+            else:
+                node = nodes.pop()
                 lyst.append(node.data)
-                recurse(node.right)
+                # print(len(lyst))
+                node = node.right
 
-        recurse(self._root)
         return iter(lyst)
 
     def postorder(self):
         """Supports a postorder traversal on a view of self."""
         lst = list()
-        def postorder1(node, node_list):
-            if node.left is not None:
-                postorder1(node.left, node_list)
-            node_list.append(node.data)
-            if node.right is not None:
-                postorder1(node.right, node_list)
-        postorder1(self._root, lst)
+        def postorder1(node):
+            if node is not None:
+                postorder1(node.left)
+                lst.append(node.data)
+                postorder1(node.right)
+        postorder1(self._root)
+
         return lst
 
     def levelorder(self):
@@ -312,7 +325,7 @@ class LinkedBST(AbstractCollection):
         :return:
         '''
 
-        nodes = self.postorder()
+        nodes = self.inorder()
         self.clear()
         def recursive_add_mid(tree:LinkedBST, lst:list):
             if len(lst) == 0:
@@ -323,7 +336,7 @@ class LinkedBST(AbstractCollection):
             recursive_add_mid(tree, lst[:l//2])
             recursive_add_mid(tree, lst[l//2:])
 
-        recursive_add_mid(self, nodes) 
+        recursive_add_mid(self, list(nodes)) 
 
     def successor(self, item):
         """
@@ -401,7 +414,6 @@ class LinkedBST(AbstractCollection):
         shuffle(lst)
         for line in lst:
             random_add_tree.add(line)
-        # print(len(lst), unbalanced_tree._size)
         balanced_tree.rebalance()
 
         print('Words added successfully!')
@@ -434,4 +446,4 @@ class LinkedBST(AbstractCollection):
 if __name__ == '__main__':
     my_tree = LinkedBST()
     print('Attention: adding words may take some time')
-    my_tree.demo_bst('binary_search_tree/words100.txt')
+    my_tree.demo_bst('binary_search_tree/words10.txt')
