@@ -121,27 +121,39 @@ class LinkedBST(AbstractCollection):
         """Adds item to the tree."""
 
         # Helper function to search for item's position
-        def recurse(node):
-            # New item is less, go left until spot is found
-            if item < node.data:
-                if node.left == None:
-                    node.left = BSTNode(item)
-                else:
-                    recurse(node.left)
-            # New item is greater or equal,
-            # go right until spot is found
-            elif node.right == None:
-                node.right = BSTNode(item)
-            else:
-                recurse(node.right)
-                # End of recurse
+        # def recurse(node):
+        #     # New item is less, go left until spot is found
+        #     if item < node.data:
+        #         if node.left == None:
+        #             node.left = BSTNode(item)
+        #         else:
+        #             recurse(node.left)
+        #     # New item is greater or equal,
+        #     # go right until spot is found
+        #     elif node.right == None:
+        #         node.right = BSTNode(item)
+        #     else:
+        #         recurse(node.right)
+        #         # End of recurse
 
         # Tree is empty, so new item goes at the root
         if self.isEmpty():
             self._root = BSTNode(item)
         # Otherwise, search for the item's spot
+        # P.S. Again, I rewrote the function to be iterative to handle recursion limit
         else:
-            recurse(self._root)
+            node = self._root
+            while True:
+                if item < node.data:
+                    if node.left is None:
+                        node.left = BSTNode(item)
+                        break
+                    node = node.left
+                else:
+                    if node.right is None:
+                        node.right = BSTNode(item)
+                        break
+                    node = node.right
         self._size += 1
 
     def remove(self, item):
@@ -353,7 +365,7 @@ class LinkedBST(AbstractCollection):
             return nodes[i - 1]
         return
 
-    def demo_bst(self, path='words.txt'):
+    def demo_bst(self, path='binary_search_tree/words.txt'):
         """
         Demonstration of efficiency binary search tree for the search tasks.
         :param path:
@@ -361,7 +373,16 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
+        lst = list()
+        unbalanced_tree = LinkedBST()
+        random_add_tree = LinkedBST()
+        balanced_tree = LinkedBST()
+        with open(path, 'r', encoding='utf-8') as src:
+            line = src.readline().strip()
+            while line != '':
+                print(line)
+                line = src.readline().strip()
 
-# if __name__ == '__main__':
-#     my_tree = LinkedBST()
-#     my_tree.demo_bst()
+if __name__ == '__main__':
+    my_tree = LinkedBST()
+    my_tree.demo_bst()

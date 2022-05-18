@@ -22,15 +22,14 @@ def main():
     # tree.add('S')
     print(tree)
     print(tree.height())
-    # tree.rebalance()
+    tree.rebalance()
+    print('After balancing:')
+    print(tree)
     print(tree.range_find('C', 'G'))
     print(tree.is_balanced())
-    print(tree.find('A'))
+    print(tree.find('R'))
 
 
     
 if __name__ == "__main__":
     main()
-
-
-
