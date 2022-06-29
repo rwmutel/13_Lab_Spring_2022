@@ -61,14 +61,6 @@ class LinkedBST(AbstractCollection):
         lyst = list()
         nodes = LinkedStack()
 
-        # def recurse(node):
-        #     print(len(lyst))
-        #     if node != None:
-        #         recurse(node.left)
-        #         lyst.append(node.data)
-        #         recurse(node.right)
-        # recurse(self._root)
-
         node = self._root
         while not nodes.isEmpty() or node is not None:
             if node is not None:
@@ -410,12 +402,12 @@ class LinkedBST(AbstractCollection):
             lst.append(line)
             unbalanced_tree.add(line)
             balanced_tree.add(line)
-        print()
         shuffle(lst)
         for line in lst:
             random_add_tree.add(line)
         balanced_tree.rebalance()
 
+        print('Progress: 100%  ')
         print('Words added successfully!')
         print(f'\nFinding {ITERATIONS} words :')
         print('\n--Built-in list:')
@@ -446,4 +438,4 @@ class LinkedBST(AbstractCollection):
 if __name__ == '__main__':
     my_tree = LinkedBST()
     print('Attention: adding words may take some time')
-    my_tree.demo_bst('binary_search_tree/words10.txt')
+    my_tree.demo_bst('words10.txt')
